@@ -54,7 +54,59 @@ print("Testing samples:",X_test.shape[0])
 
 #STEP 4 : Define classification algorithms
 
+models={
 
+   "Logistic Regression":LogisticRgression(
+     max_iter=5000
+   ),
+
+  "KNN": KNeighborsClassifier(),
+
+  "Decision Tree": DecisionTreeClassifier(
+    random_state=42
+  ),
+
+  "Random Forest": RandomForestClassifir(
+    random_state=42
+  ),
+
+  "SVM":SVC()
+}
+
+
+#step 5 : Define hyperparameter grids
+
+param_grids={
+
+  "Logistic Regresson":{
+    "model__c":[0.1,1,10],
+    "model__solver":["liblinear"]
+  },
+
+  "KNN":{
+    "model__n_neighbors":[3,5,7,9],
+    "model__weights":["uniform","distance"]
+  },
+
+  "Decision Tree":{
+    "model__max_depth":[None,3,5,10],
+    "model__min_samples_split":[2,5,10]
+  },
+
+  "Random Forest":{
+    "model__n_estimators":[100,200],
+    "model__max_depth":[None,5,10],
+    "model__min_samples_split":[2,5]
+  },
+
+  "SVM":{
+    "model__C":[0.1,1,10],
+    "model__kernel":["linear","rbf"],
+    "model__gamma":["scale","auto"]
+  }
+}
+
+#STEP 6: 
 
 
 
