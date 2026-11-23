@@ -106,8 +106,107 @@ param_grids={
   }
 }
 
-#STEP 6: 
+#STEP 6: RunGridSearchCV for every algorithm
 
+results=[]
+best_models={}
+
+for model_name,model in models.items():
+
+  print("\n"+"="*60)
+  print("Running:",model_name)
+  print("="*60)
+
+pipeline=Pipeline([
+  ("scaler",StandardScaler())
+  ("model",model)
+])
+
+grid_search=GridSearchCV(
+  estimator=pipeline,
+  param_grid=param_grids[model_name],
+  scoring='f1',
+  cv=5,
+  n_jobs=-1
+)
+
+gri_search.fit(X_train,y_train)
+
+best_models[model_name]=grid_search.best_estimator_results.append({
+  "Model":model_name,
+  "Best F1 Score":grid_search.best_score_,
+  "Best Parameters":grid_search.best_params_
+})
+
+print("Best F1 Score:",
+      round(grid_search.best_score_,4))
+
+print("Best Parameters:",
+      grid_search.best_params_)
+
+#STEP 7 : Compare all models
+
+results_df=pd.DataFrame(results)
+
+results_df=results_df.sort_values(
+  by="Best F1 Score",
+  ascending=False
+)
+
+print("\n"+"="*60)
+print("MODEL COMPARISON")
+print("="*60)
+
+print(
+  results_df[
+    ["Model","Best F1 Score]
+  ].to_string(index=False)
+)
+
+#STEP 8 : Select the best model
+
+best_model_name=results_df.iloc[0]["Model"]
+
+best_model=best_models[best_model_name]
+
+best_cv_f1=results_df.iloc[0]["Best F1 Score"]
+
+print("\nBest model based on CV F1=score:")
+print(best_model_name)
+
+print("\nBest CV F1-score:")
+print(round(best_cv_f1,4))
+
+
+#STEP 9 : Evaluate on unseen test data
+
+y_pred=best_model.predict(X_test)
+
+print("\n"+"="*60)
+print("FINAL MODEL EVALUATION")
+print("="*60)
+
+print("Accuracy:",accuracy_score(y_test,y_pred))
+
+print("F1 Score:",f1_score(y_test,y_pred))
+print("\nClassification Report:")
+print(
+  classification_report(
+    y_test,
+    y_pred,
+    target_names=data.target_names
+  )
+)
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test,y_pred))
+
+#STEP 10: Save the best model
+
+joblib.dumb(best_model,"best_model.joblib")
+
+print("\n Best model saved successfully!")
+print("Model:",best_model_name)
 
 
 
