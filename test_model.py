@@ -50,7 +50,7 @@ def test_prediction_shape(model.predict(sample_data)
   assert len(predictions)==len(sample_data)
 
 #TEST 4 : Check valid prediction labels
-def test_prediction_value(model,sample_data):
+def test_prediction_values(model,sample_data):
 
   predictions=model.predict(sample_data)
 
@@ -59,9 +59,53 @@ def test_prediction_value(model,sample_data):
 #TEST 5 : Check prediction probabilities
 def test_prediction_values(model,sample_data):
 
-  predictions=model.predict(sample_data)
+  probabilities=model.predict_proba(sample_data)
 
-  assert set(predictions).issubset({0,1})
+  assert probabilities.shape==(5,2)
+  
+  assert np.all(probabilities>=0)
+
+  assert np.all(probabilities<=1)
+
+  assert np.allclose(probabilities.sum(axis=1),1)
+
+#TEST 6: Check pipeline structure
+def test_model_pipeline(model);
+
+  assert hasattr(model,"named_steps")
+
+  assert "scaler" in model.named_steps
+
+  assert "model" in model.named_steps
+
+#TEST 7: Check reusable prediction function
+def test_make_prediction(model,sample_data):
+
+  output=make_prediction(model.sample_data)
+
+  assert "prediction" in output
+
+  assert output["prdiction"]in{"Malignant","Benign"}
+
+#TEST 8: Check probabilities returned by prediction function
+def test_male_prediction_probabilities(model,sample_data):
+
+  output=make_prediction(model,sample_data)
+
+  probabilities=output["probabilities"]
+
+  assert "malignant" in probabilities
+
+  assert "benign" in probabilities
+
+  assert 0<=probabilities["malignant"]<=1
+
+  assert 0<=probabilities["benign"]<=1
+  
+
+  
+
+
                          
 
 
